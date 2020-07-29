@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+
+  <!--SingleSignOutHttpSessionListener: 负责单点登出-->
+  <listener>
+    <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+  </listener>
+  <filter>
+    <filter-name>CAS Single Sign Out Filter</filter-name>
+    <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CAS Single Sign Out Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!--AuthenticationFilter：负责统一认证的过滤器-->
+  <filter>
+    <filter-name>CASFilter</filter-name>
+    <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+    <init-param>
+      <!--casServerLoginUrl：指定认证中心的地址-->
+      <param-name>casServerLoginUrl</param-name>
+      <param-value>http://localhost:9100/cas/login</param-value>
+    </init-param>
+    <init-param>
+      <param-name>serverName</param-name>
+      <!--当前cas-client的地址-->
+      <param-value>http://localhost:9002</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CASFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>CAS Validation Filter</filter-name>
+    <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+    <init-param>
+      <!--登录前缀-->
+      <param-name>casServerUrlPrefix</param-name>
+      <param-value>http://localhost:9100/cas</param-value>
+    </init-param>
+    <init-param>
+      <param-name>serverName</param-name>
+      <!--cas-client地址-->
+      <param-value>http://localhost:9002</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <!--HttpServletRequest Wrapper ： 对request对象进行包装，将request对象进行功能性的增强-->
+  <filter>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <filter-class>
+      org.jasig.cas.client.util.HttpServletRequestWrapperFilter
+    </filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!--本地线程-->
+  <filter>
+    <filter-name>CAS Assertion Thread Local Filter</filter-name>
+    <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CAS Assertion Thread Local Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+</web-app>
